@@ -32,7 +32,7 @@ const Paragraph = () => {
       const command = new SynthesizeSpeechCommand(params);
       const data = await client.send(command);
       const blob = await data.AudioStream?.transformToByteArray();
-      const url = URL.createObjectURL(new Blob([blob as Uint8Array]))
+      const url = URL.createObjectURL(new Blob([blob as Uint8Array],{type: 'audio/mpeg'} ))
       setTimeout(() => {
         setAudio(url);
       }, 1000);
