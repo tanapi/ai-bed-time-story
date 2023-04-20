@@ -1,4 +1,5 @@
 import { type AppType } from "next/dist/shared/lib/utils";
+import 'react-h5-audio-player/lib/styles.css';
 import "~/styles/globals.css";
 import React, { type Dispatch, useState } from "react"
 

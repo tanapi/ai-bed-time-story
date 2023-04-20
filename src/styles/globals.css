@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.rhap_container {
+  background: #000000;
+}
+.rhap_time {
+  color: #888888;
+}
+
+.rhap_download-progress {
+  background-color: #444444;
+}
+
+.rhap_volume-bar {
+  background-color: #444444;
+}

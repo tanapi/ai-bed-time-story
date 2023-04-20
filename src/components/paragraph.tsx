@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react'
-import ReactAudioPlayer from "react-audio-player";
+import AudioPlayer from 'react-h5-audio-player';
 import { PollyClient, SynthesizeSpeechCommand } from "@aws-sdk/client-polly";
 import { AppContext } from "../pages/_app";
 
@@ -48,25 +48,29 @@ const Paragraph = () => {
         </span> <span className="animate-text-focus-in font-klee">{storys[index]}</span>
       </p>
       <div className="flex flex-row-reverse">
-        {storys[index] != undefined &&
-         storys[index] != "無限読み聞かせ" &&
-         audio && (
-          <ReactAudioPlayer 
-            src={audio} 
-            controls 
-            autoPlay={true} 
-            onEnded={() => { 
-              setTimeout(() => {
-                if (storys.length <= index + 1) {
-                  setStorys([]);
-                  setIndex(0);
-                } else {
-                  setIndex(index + 1);
-                }
-              }, 2000);
-            }}
-          />
-        )}
+        <div  className="w-1/2">
+          {storys[index] != undefined &&
+          storys[index] != "無限読み聞かせ" &&
+          audio && (
+            <AudioPlayer 
+              src={audio} 
+              autoPlay={true}
+              showSkipControls={false}
+              showJumpControls={false}
+              customAdditionalControls={[]}
+              onEnded={() => { 
+                setTimeout(() => {
+                  if (storys.length <= index + 1) {
+                    setStorys([]);
+                    setIndex(0);
+                  } else {
+                    setIndex(index + 1);
+                  }
+                }, 2000);
+              }}
+            />
+          )}
+        </div>
       </div>
     </>
   )
