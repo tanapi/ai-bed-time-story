@@ -3,12 +3,14 @@ import Layout from "../components/layout";
 import Marquee from "react-fast-marquee"
 import Button from "../components/button"
 import Loading from "../components/loading"
+import Select from "../components/select"
 import Paragraph from "../components/paragraph"
 import { AppContext } from "../pages/_app";
 import { useContext, useEffect } from 'react'
 import { Configuration, OpenAIApi } from "openai";
 import { PollyClient, SynthesizeSpeechCommand } from "@aws-sdk/client-polly";
 import axios from 'axios';
+import { noteMap, pollyVoiceMap, promptMap } from "~/locale/locale";
 
 const configuration = new Configuration({
   organization: process.env.NEXT_PUBLIC_OPENAI_API_ORG,
@@ -16,7 +18,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-let isExec = false;
+let isChatGPTExec = false;
 let isPollyExec = false;
 
 const client = new PollyClient({ 
@@ -27,28 +29,33 @@ const client = new PollyClient({
   },
 });
 
+
 const Home: NextPage = () => {
-  const {buttonVisible} = useContext(AppContext);
+  const {isStart} = useContext(AppContext);
   const {storys, setStorys} = useContext(AppContext);
   const {index, setIndex} = useContext(AppContext);
   const {audioContext} = useContext(AppContext);
   const {setIsPlay} = useContext(AppContext);
+  const {locale} = useContext(AppContext);
 
   useEffect(() => {
     const getStorys = async (exec: boolean) => {
-      if (!exec || isExec) return;
-      console.log("#### ChatGPT")
-      isExec = true;  
-      const pompt = process.env.NEXT_PUBLIC_PROMPT ?? ''
+      if (!exec || isChatGPTExec) return;
+
+      isChatGPTExec = true;  
+      let prompt = process.env.NEXT_PUBLIC_PROMPT ?? '';
+      prompt = prompt.concat(promptMap.get(locale) ?? '');
+      console.log(prompt);
       const completion = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: pompt }],
+        messages: [{ role: "user", content: prompt }],
       });
+
       const aiAnser = completion.data.choices[0]?.message?.content;
       const storys = aiAnser?.split("\n\n") ?? [""];
       setStorys(storys);
       setIndex(0);
-      isExec = false;  
+      isChatGPTExec = false;  
     }
     void getStorys(storys.length == 0);
   }, [storys]);
@@ -60,11 +67,11 @@ const Home: NextPage = () => {
       isPollyExec = true;
       const params = {
         Engine: 'standard',
-        LanguageCode: 'ja-JP',
+        LanguageCode: locale,
         Text: text,
         TextType: 'text',
         OutputFormat: 'mp3',
-        VoiceId: 'Mizuki'
+        VoiceId: pollyVoiceMap.get(locale)
       };
       const command = new SynthesizeSpeechCommand(params);
       const data = await client.send(command);
@@ -101,23 +108,32 @@ const Home: NextPage = () => {
       <div className="text-3xl sm:text-4xl px-4 py-4 max-w-3xl h-max">
         {Paragraph()}
       </div>
+      <div className="text-xl px-4 py-8">
+        {Select()}
+      </div>
       <div className="text-5xl px-4 py-4">
         {Button()}
       </div>
       <div className="text-5xl px-4 py-4">
         {Loading()}
       </div>
-      {
-        buttonVisible && (
+       {
+        isStart && (
           <div className="max-w-sm">
             <Marquee gradient={false}>
-              <div className="mx-5">注意：このサイトは音が出ます</div>
-              <div className="mx-5">お子様を寝かしつけるお供に</div>
-              <div className="mx-5">大人でもつまらない話で眠くなるかも</div>
+              <div className="mx-5">　　　　　</div>
+              <div className="mx-5">{noteMap.get(locale)?.at(0)}</div>
+              <div className="mx-5">{noteMap.get(locale)?.at(1)}</div>
+              <div className="mx-5">{noteMap.get(locale)?.at(2)}</div>
             </Marquee>
           </div>
         )
       }
+      <div className="absolute inset-x-0 bottom-0 h-8">
+        <div className="flex justify-center text-gray-800">
+          @tana_p 2023
+        </div>
+      </div>
     </Layout>
   );
 };

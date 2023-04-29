@@ -1,9 +1,9 @@
 import { AppContext } from "../pages/_app";
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 
-const Button = () => {
+const MyComponent = () => {
   const {storys, setStorys} = useContext(AppContext);
-  const {buttonVisible, setButtonVisible} = useContext(AppContext);
+  const {isStart, setIsStart} = useContext(AppContext);
   const {audioContext, setAudioContext} = useContext(AppContext);
   const {isPlay, setIsPlay} = useContext(AppContext);
  
@@ -12,16 +12,15 @@ const Button = () => {
       onClick={() => {
         if (audioContext == null){
           setAudioContext(new AudioContext);
-          // audioContext?.createBufferSource().start(0);
           setStorys([]);
-          setButtonVisible(false);
+          setIsStart(false);
         } else {
           if (audioContext?.state == 'running') {
             void audioContext.suspend().then(() => {
               setIsPlay(false);
             });
           } else {
-            void audioContext.resume().then(() => {
+            void audioContext?.resume().then(() => {
               setIsPlay(true);
             });
           }
@@ -31,9 +30,9 @@ const Button = () => {
     >
       <span className="text-4xl material-symbols-outlined">
         { (isPlay) ? ( "pause_circle" ) : ( "play_circle" ) }
-      </span> { buttonVisible && ( "START" ) }
+      </span> { (isStart) ? ( "START" ) : ( (isPlay) ? ( "PAUSE" ) : ( "PLAY") ) }
     </button>
   );
 }
 
-export default Button;
+export default MyComponent;

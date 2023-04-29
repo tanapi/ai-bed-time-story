@@ -21,7 +21,7 @@ export default {
       }
     },
     fontFamily: {
-      'klee': ['Klee One'],
+      'noto': ['Noto Serif JP', 'Noto Serif SC', 'Noto Serif KR'],
     }
   },
   plugins: [],

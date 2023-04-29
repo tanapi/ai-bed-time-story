@@ -8,29 +8,33 @@ export const AppContext = React.createContext(
     setStorys: Dispatch<React.SetStateAction<string[]>>;
     index: number;
     setIndex: Dispatch<React.SetStateAction<number>>;
-    buttonVisible: boolean;
-    setButtonVisible: Dispatch<React.SetStateAction<boolean>>;
+    isStart: boolean;
+    setIsStart: Dispatch<React.SetStateAction<boolean>>;
     isPlay: boolean;
     setIsPlay: Dispatch<React.SetStateAction<boolean>>;
     audioContext: AudioContext|null;
     setAudioContext: Dispatch<React.SetStateAction<AudioContext>>;
+    locale: string;
+    setLocale: Dispatch<React.SetStateAction<string>>;
   }
 )
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   const [storys, setStorys] = useState(["無限読み聞かせ"])
   const [index, setIndex] = useState(-1)
-  const [buttonVisible, setButtonVisible] = useState(true);
+  const [isStart, setIsStart] = useState(true);
   const [isPlay, setIsPlay] = useState(false);
   const [audioContext, setAudioContext] = useState(null as unknown as AudioContext);
+  const [locale, setLocale] = useState("ja-JP");
 
   return (
     <AppContext.Provider value={{
       storys, setStorys, 
       index, setIndex, 
-      buttonVisible, setButtonVisible,
+      isStart, setIsStart,
       isPlay, setIsPlay,
-      audioContext, setAudioContext
+      audioContext, setAudioContext,
+      locale, setLocale
     }}>
       <Component {...pageProps} key={index} />
     </AppContext.Provider>

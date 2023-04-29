@@ -1,7 +1,10 @@
 import { useContext } from 'react'
 import { AppContext } from "../pages/_app";
+import { titleMap } from "~/locale/locale";
 
-const Paragraph = () => {
+const MyComponent = () => {
+  const {isStart} = useContext(AppContext);
+  const {locale} = useContext(AppContext);
   const {storys} = useContext(AppContext);
   const {index} = useContext(AppContext);
 
@@ -10,10 +13,10 @@ const Paragraph = () => {
       <p className='pb-8'>
         <span className="text-4xl material-symbols-outlined">
           auto_stories
-        </span> <span className="animate-text-focus-in font-klee">{storys[(index<0) ? 0 : index]}</span>
+        </span> <span className="animate-text-focus-in font-noto">{(isStart) ? titleMap.get(locale) : storys[index]}</span>
       </p>
     </>
   )
 }
   
-export default Paragraph;
+export default MyComponent;
