@@ -1,77 +1,17 @@
-import { useState, useContext, useEffect } from 'react'
-import AudioPlayer from 'react-h5-audio-player';
-import { PollyClient, SynthesizeSpeechCommand } from "@aws-sdk/client-polly";
+import { useContext } from 'react'
 import { AppContext } from "../pages/_app";
 
-const client = new PollyClient({ 
-    region: "ap-northeast-1",
-    credentials: {
-        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID ?? '',
-        secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY ?? '',
-    },
-  });
-
 const Paragraph = () => {
-  const {storys, setStorys} = useContext(AppContext);
-  const {index, setIndex} = useContext(AppContext);
-
-  const [audio, setAudio] = useState<string>("");
-
-  useEffect(() => {
-    const blobUrl = async (text: string | undefined) => {
-      if (text == undefined || text.length == 0 || text == "無限読み聞かせ") return;
-      console.log("--- Call Polly")
-      const params = {
-        Engine: 'standard',
-        LanguageCode: 'ja-JP',
-        Text: text,
-        TextType: 'text',
-        OutputFormat: 'mp3',
-        VoiceId: 'Mizuki'
-      };
-      const command = new SynthesizeSpeechCommand(params);
-      const data = await client.send(command);
-      const blob = await data.AudioStream?.transformToByteArray();
-      const url = URL.createObjectURL(new Blob([blob as Uint8Array],{type: 'audio/mpeg'} ))
-      setTimeout(() => {
-        setAudio(url);
-      }, 1000);
-    }
-    void blobUrl(storys[index]);
-  }, [index, storys]);
+  const {storys} = useContext(AppContext);
+  const {index} = useContext(AppContext);
 
   return(
     <>
       <p className='pb-8'>
         <span className="text-4xl material-symbols-outlined">
           auto_stories
-        </span> <span className="animate-text-focus-in font-klee">{storys[index]}</span>
+        </span> <span className="animate-text-focus-in font-klee">{storys[(index<0) ? 0 : index]}</span>
       </p>
-      <div className="flex flex-row-reverse">
-        <div  className="w-1/2">
-          {storys[index] != undefined &&
-          storys[index] != "無限読み聞かせ" &&
-          audio && (
-            <AudioPlayer 
-              src={audio} 
-              autoPlay={true}
-              showSkipControls={false}
-              showJumpControls={false}
-              customAdditionalControls={[]}
-              onEnded={() => { 
-                setTimeout(() => {
-                  if (storys.length <= index + 1) {
-                    setStorys([]);
-                    setIndex(0);
-                  } else {
-                    setIndex(index + 1);
-                  }
-                }, 2000);
-              }}
-            />
-          )}
-        </div>
-      </div>
     </>
   )
 }
