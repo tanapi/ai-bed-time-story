@@ -108,7 +108,7 @@ const Home: NextPage = () => {
       <div className="text-3xl sm:text-4xl px-4 py-4 max-w-3xl h-max">
         {Paragraph()}
       </div>
-      <div className="text-xl px-4 py-8">
+      <div className="text-xl px-4 pt-6 pb-24">
         {Select()}
       </div>
       <div className="text-5xl px-4 py-4">
