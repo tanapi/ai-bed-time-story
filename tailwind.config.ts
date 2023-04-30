@@ -21,7 +21,7 @@ export default {
       }
     },
     fontFamily: {
-      'noto': ['Noto Serif JP', 'Noto Serif SC', 'Noto Serif KR'],
+      'noto': ['Noto Serif JP', 'Noto Serif SC', 'Noto Serif KR', 'Noto Serif'],
     }
   },
   plugins: [],

@@ -8,30 +8,32 @@ const MyComponent = () => {
   const {isPlay, setIsPlay} = useContext(AppContext);
  
   return (storys.length != 0) && (
-    <button
-      onClick={() => {
-        if (audioContext == null){
-          setAudioContext(new AudioContext);
-          setStorys([]);
-          setIsStart(false);
-        } else {
-          if (audioContext?.state == 'running') {
-            void audioContext.suspend().then(() => {
-              setIsPlay(false);
-            });
+    <div className="text-5xl px-4 py-4">
+      <button
+        onClick={() => {
+          if (audioContext == null){
+            setAudioContext(new AudioContext);
+            setStorys([]);
+            setIsStart(false);
           } else {
-            void audioContext?.resume().then(() => {
-              setIsPlay(true);
-            });
+            if (audioContext?.state == 'running') {
+              void audioContext.suspend().then(() => {
+                setIsPlay(false);
+              });
+            } else {
+              void audioContext?.resume().then(() => {
+                setIsPlay(true);
+              });
+            }
           }
-        }
-      }}
-      className="bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded"
-    >
-      <span className="text-4xl material-symbols-outlined">
-        { (isPlay) ? ( "pause_circle" ) : ( "play_circle" ) }
-      </span> { (isStart) ? ( "START" ) : ( (isPlay) ? ( "PAUSE" ) : ( "PLAY") ) }
-    </button>
+        }}
+        className="bg-transparent text-gray-500 font-semibold active:bg-gray-500 active:text-white py-2 px-4 border border-gray-500 hover:border-gray-200 rounded"
+      >
+        <span className="text-4xl material-symbols-outlined">
+          { (isPlay) ? ( "pause_circle" ) : ( "play_circle" ) }
+        </span> { (isStart) ? ( "START" ) : ( (isPlay) ? ( "PAUSE" ) : ( "PLAY") ) }
+      </button>
+    </div>
   );
 }
 

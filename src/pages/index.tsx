@@ -19,16 +19,6 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 let isChatGPTExec = false;
-let isPollyExec = false;
-
-const client = new PollyClient({ 
-  region: "ap-northeast-1",
-  credentials: {
-      accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID ?? '',
-      secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY ?? '',
-  },
-});
-
 
 const Home: NextPage = () => {
   const {isStart} = useContext(AppContext);
@@ -60,6 +50,16 @@ const Home: NextPage = () => {
     void getStorys(storys.length == 0);
   }, [storys]);
 
+  const polly = new PollyClient({ 
+    region: "ap-northeast-1",
+    credentials: {
+        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID ?? '',
+        secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY ?? '',
+    },
+  });
+     
+  let isPollyExec = false;
+
   useEffect(() => {
     const playStory = async (text: string | undefined) => {
       if (text == undefined || text.length == 0 || storys.length == 1 || isPollyExec) return;
@@ -74,7 +74,8 @@ const Home: NextPage = () => {
         VoiceId: pollyVoiceMap.get(locale)
       };
       const command = new SynthesizeSpeechCommand(params);
-      const data = await client.send(command);
+      const data = await polly.send(command);
+
       const blob = await data.AudioStream?.transformToByteArray();
       const url = URL.createObjectURL(new Blob([blob as Uint8Array],{type: 'audio/mpeg'} ))
       void axios.get(url, {responseType: 'arraybuffer'}).then(res => {
@@ -93,9 +94,12 @@ const Home: NextPage = () => {
               setIndex(index + 1);
             }
           };
-          setIsPlay(true);
           await new Promise(resolve => setTimeout(resolve, 1000));
           source.start(0);
+          if ((audioContext?.state != 'running')) {
+            void audioContext?.resume();
+          }
+          setIsPlay(true);
           isPollyExec = false;
         })
       });
@@ -105,19 +109,11 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <div className="text-3xl sm:text-4xl px-4 py-4 max-w-3xl h-max">
-        {Paragraph()}
-      </div>
-      <div className="text-xl px-4 pt-6 pb-24">
-        {Select()}
-      </div>
-      <div className="text-5xl px-4 py-4">
-        {Button()}
-      </div>
-      <div className="text-5xl px-4 py-4">
-        {Loading()}
-      </div>
-       {
+      {Paragraph()}
+      {Select()}
+      {Button()}
+      {Loading()}
+      {
         isStart && (
           <div className="max-w-sm">
             <Marquee gradient={false}>

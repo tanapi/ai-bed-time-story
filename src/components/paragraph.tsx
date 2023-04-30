@@ -9,13 +9,13 @@ const MyComponent = () => {
   const {index} = useContext(AppContext);
 
   return(
-    <>
+    <div className="text-3xl sm:text-4xl px-4 py-4 max-w-3xl h-max">
       <p className='pb-8'>
         <span className="text-4xl material-symbols-outlined">
           auto_stories
         </span> <span className="animate-text-focus-in font-noto">{(isStart) ? titleMap.get(locale) : storys[index]}</span>
       </p>
-    </>
+    </div>
   )
 }
   

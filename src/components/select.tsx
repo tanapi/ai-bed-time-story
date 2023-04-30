@@ -16,7 +16,7 @@ const MyComponent = () => {
   });
 
   return isStart && (
-    <>
+    <div className="text-xl px-4 pt-6 pb-24">
       <Select
         instanceId="selectLocale"
         options={locales}
@@ -25,7 +25,7 @@ const MyComponent = () => {
           setLocale(value?.value as string);
         }}
       />
-    </>
+    </div>
   );
 }
 
