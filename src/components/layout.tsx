@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Script from "next/script";
 
 const Layout = ({ children }: {
   children: React.ReactNode;
@@ -16,6 +17,23 @@ const Layout = ({ children }: {
       <main className="flex h-screen flex-col items-center justify-center bg-black text-gray-300">
         { children }
       </main>
+      <Script
+         strategy="afterInteractive"
+         src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID ?? ""}`}
+       />
+       <Script
+         id="gtag-init"
+         strategy="afterInteractive"
+         dangerouslySetInnerHTML={{
+           __html: `
+           window.dataLayer = window.dataLayer || [];
+           function gtag(){dataLayer.push(arguments);}
+           gtag('js', new Date());
+ 
+           gtag('config', '${process.env.NEXT_PUBLIC_GA_ID ?? ""}');
+           `,
+         }}
+       />
     </>
   );
 }
